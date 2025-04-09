@@ -2,12 +2,13 @@ import styles from './styles.module.css';
 
 const getPagesButtons = ({ currentPage, totalPages, handlePageClick }) => {
   const startPageNumber = currentPage <= 5 ? 1 : currentPage - 4;
-  const endPageNumber =
-    currentPage < 5
-      ? 11
-      : currentPage + 6 <= totalPages
-      ? currentPage + 6
-      : totalPages;
+  let endPageNumber = currentPage;
+  if (endPageNumber < totalPages) {
+    endPageNumber = totalPages;
+  }
+  if (endPageNumber > currentPage + 10) {
+    endPageNumber = currentPage + 10;
+  }
   const paginArray = [];
   for (let i = startPageNumber; i < endPageNumber; i++) {
     paginArray.push(
