@@ -6,15 +6,20 @@ import NewsList from '../../components/NewsList/NewsList';
 import Skeleton from '../../components/Skeleton/Skeleton';
 import Pagination from '../../components/Pagination/Pagination';
 import Categories from '../../components/Categories/Categories';
+import Search from '../../components/Search/Search';
+import { useDebounce } from '../../helpers/hooks/useDebounce';
 
 const Main = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [categories, setCategories] = useState([]);
-  const [selectedCatogory, setSelectedCateogory] = useState('all');
+  const [keywords, setKeywords] = useState('');
+  const [selectedCategory, setSelectedCateogory] = useState('all');
   const [news, setNews] = useState([]);
-  const pageSize = 11;
+  const pageSize = 10;
+
+  const debouncedKeywords = useDebounce(keywords, 1000);
 
   const fetchNews = async (currentPage) => {
     try {
@@ -22,10 +27,15 @@ const Main = () => {
       const response = await getNews({
         page_number: currentPage,
         page_size: pageSize,
-        category: selectedCatogory,
+        category: selectedCategory,
+        keywords: keywords,
       });
       setNews(response.data.articles);
-      setTotalPages(Math.floor(response.data.totalResults / pageSize) + 1);
+      setTotalPages(
+        Math.floor(response.data.totalResults % pageSize) === 0
+          ? Math.floor(response.data.totalResults / pageSize)
+          : Math.floor(response.data.totalResults / pageSize) + 1
+      );
       setIsLoading(false);
     } catch (error) {
       console.log(error);
@@ -43,7 +53,7 @@ const Main = () => {
 
   useEffect(() => {
     fetchNews(currentPage);
-  }, [currentPage, selectedCatogory]);
+  }, [currentPage, selectedCategory, debouncedKeywords]);
 
   useEffect(() => {
     fetchCategories();
@@ -70,7 +80,13 @@ const Main = () => {
       <Categories
         categories={categories}
         setSelectedCategory={setSelectedCateogory}
-        selectedCategory={selectedCatogory}
+        selectedCategory={selectedCategory}
+      />
+
+      <Search
+        keywords={keywords}
+        setKeywords={setKeywords}
+        selectedCategory={selectedCategory}
       />
 
       {news.length > 0 && !isLoading ? (
