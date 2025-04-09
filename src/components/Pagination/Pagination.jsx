@@ -1,5 +1,30 @@
 import styles from './styles.module.css';
 
+const getPagesButtons = ({ currentPage, totalPages, handlePageClick }) => {
+  const startPageNumber = currentPage <= 5 ? 1 : currentPage - 4;
+  const endPageNumber =
+    currentPage < 5
+      ? 11
+      : currentPage + 6 <= totalPages
+      ? currentPage + 6
+      : totalPages;
+  const paginArray = [];
+  for (let i = startPageNumber; i < endPageNumber; i++) {
+    paginArray.push(
+      <button
+        onClick={() => handlePageClick(i)}
+        key={i}
+        className={styles.pageNumber}
+        disabled={i === currentPage}
+      >
+        {i}
+      </button>
+    );
+  }
+
+  return paginArray;
+};
+
 const Pagination = ({
   totalPages,
   currentPage,
@@ -17,17 +42,10 @@ const Pagination = ({
         {'<'}
       </button>
       <div className={styles.list}>
-        {[...Array(totalPages)].map((_, index) => {
-          return (
-            <button
-              onClick={() => handlePageClick(index + 1)}
-              key={index}
-              className={styles.pageNumber}
-              disabled={index + 1 === currentPage}
-            >
-              {index + 1}
-            </button>
-          );
+        {getPagesButtons({
+          currentPage: currentPage,
+          totalPages: totalPages,
+          handlePageClick: handlePageClick,
         })}
       </div>
 
