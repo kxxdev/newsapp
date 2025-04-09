@@ -9,7 +9,6 @@ export const getNews = async () => {
       `&apikey=${API_KEY}`;
 
     const response = await axios.get(url);
-
     return response;
   } catch (error) {
     console.log(error);
