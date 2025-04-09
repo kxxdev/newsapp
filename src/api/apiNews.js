@@ -44,7 +44,7 @@ export const getNews = async ({
 
     const response = await axios.get(url);
 
-    return response;
+    return response.data;
   } catch (error) {
     console.log(error);
   }
@@ -52,6 +52,7 @@ export const getNews = async ({
 
 export const getCategories = async () => {
   return [
+    'all',
     'business',
     'entertainment',
     'general',
