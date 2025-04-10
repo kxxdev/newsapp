@@ -1,32 +1,6 @@
 import axios from 'axios';
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
-
-const createUrl = ({ page_number, page_size, category, keywords }) => {
-  if (category === 'all' && !keywords)
-    return (
-      'https://newsapi.org/v2/top-headlines?' +
-      'country=us' +
-      `&pageSize=${page_size}` +
-      `&page=${page_number}` +
-      `&apikey=${API_KEY}`
-    );
-  if (!keywords) {
-    return (
-      'https://newsapi.org/v2/top-headlines?' +
-      `category=${category}` +
-      `&pageSize=${page_size}` +
-      `&page=${page_number}` +
-      `&apikey=${API_KEY}`
-    );
-  }
-  return (
-    'https://newsapi.org/v2/everything?' +
-    `q=${keywords}` +
-    `&pageSize=${page_size}` +
-    `&page=${page_number}` +
-    `&apikey=${API_KEY}`
-  );
-};
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export const getNews = async ({
   page_number = 1,
@@ -35,14 +9,15 @@ export const getNews = async ({
   keywords = null,
 }) => {
   try {
-    const url = createUrl({
-      page_number,
-      page_size,
-      category,
-      keywords,
+    const response = await axios.get(`${BASE_URL}/search`, {
+      params: {
+        apiKey: API_KEY,
+        page_number,
+        page_size,
+        category,
+        keywords,
+      },
     });
-
-    const response = await axios.get(url);
 
     return response.data;
   } catch (error) {
@@ -51,14 +26,27 @@ export const getNews = async ({
 };
 
 export const getCategories = async () => {
-  return [
-    'all',
-    'business',
-    'entertainment',
-    'general',
-    'health',
-    'science',
-    'sports',
-    'technology',
-  ];
+  try {
+    const response = await axios.get(`${BASE_URL}/available/categories`, {
+      params: {
+        apiKey: API_KEY,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getLatestNews = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/latest-news`, {
+      params: {
+        apiKey: API_KEY,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 };

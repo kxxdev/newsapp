@@ -11,7 +11,7 @@ const NewsFilters = ({ filters, changeFilter }) => {
     <div className={styles.filters}>
       {dataCategories ? (
         <Categories
-          categories={dataCategories}
+          categories={dataCategories.categories}
           selectedCategory={filters.category}
           setSelectedCategory={(category) => changeFilter('category', category)}
         />
